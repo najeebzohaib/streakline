@@ -263,8 +263,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--grape)}
       <input id="gIdentity" placeholder="e.g. I am someone who keeps learning" maxlength="70"></label>
     <label class="fld"><span class="lab">Why it matters <span style="color:var(--mute);font-weight:600">(optional)</span></span>
       <input id="gWhy" placeholder="e.g. Opens the door to a cloud architect role" maxlength="90"></label>
-    <label class="fld"><span class="lab">Pick an icon</span><div class="emojipick" id="gEmoji"></div></label>
-    <label class="fld"><span class="lab">Category</span><div class="catpick" id="gCat"></div></label>
+    <div class="fld"><span class="lab">Pick an icon</span><div class="emojipick" id="gEmoji"></div></div>
+    <div class="fld"><span class="lab">Category</span><div class="catpick" id="gCat"></div></div>
     <label class="fld"><span class="lab">Target date <span style="color:var(--mute);font-weight:600">(optional)</span></span>
       <input id="gDate" type="date"></label>
     <button class="save" id="saveGoal">Save goal</button>
@@ -291,11 +291,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--grape)}
     <div class="sub">Keep it small — ideally under 30 minutes of effort.</div>
     <label class="fld"><span class="lab">What's the step?</span>
       <input id="sTitle" placeholder="e.g. Watch module 3 videos" maxlength="80"></label>
-    <label class="fld"><span class="lab">What kind?</span>
+    <div class="fld"><span class="lab">What kind?</span>
       <div class="seg" id="sType">
         <button type="button" data-v="task" aria-pressed="true">✓ One-off task<span class="s">Do it once, check it off</span></button>
         <button type="button" data-v="habit">🔁 Repeating habit<span class="s">Build a daily streak</span></button>
-      </div></label>
+      </div></div>
     <div id="habitOpts" style="display:none">
       <label class="fld"><span class="lab">Remind me</span>
         <select id="sRemind"><option value="">No reminder</option><option value="daily">Every day</option><option value="weekdays">Weekdays</option><option value="weekly">Once a week</option></select></label>
@@ -554,9 +554,9 @@ function delStep(g,m,s){m.steps=m.steps.filter(x=>x.id!==s.id);toast("🗑️","
 let editGoal=null,gEmoji=EMOJIS[0],gCat="learning";
 function buildGoalPickers(){
   const ee=document.getElementById("gEmoji");ee.innerHTML="";
-  EMOJIS.forEach(e=>{const b=document.createElement("button");b.type="button";b.textContent=e;b.setAttribute("aria-pressed",e===gEmoji);b.onclick=()=>{gEmoji=e;buildGoalPickers();};ee.appendChild(b);});
+  EMOJIS.forEach(e=>{const b=document.createElement("button");b.type="button";b.textContent=e;b.setAttribute("aria-pressed",e===gEmoji);b.onclick=(ev)=>{ev.preventDefault();ev.stopPropagation();gEmoji=e;buildGoalPickers();};ee.appendChild(b);});
   const ce=document.getElementById("gCat");ce.innerHTML="";
-  Object.entries(CATS).forEach(([k,v])=>{const b=document.createElement("button");b.type="button";b.innerHTML=`<span class="dot" style="background:${v.color}"></span>${v.name}`;b.setAttribute("aria-pressed",k===gCat);b.onclick=()=>{gCat=k;buildGoalPickers();};ce.appendChild(b);});
+  Object.entries(CATS).forEach(([k,v])=>{const b=document.createElement("button");b.type="button";b.innerHTML=`<span class="dot" style="background:${v.color}"></span>${v.name}`;b.setAttribute("aria-pressed",k===gCat);b.onclick=(ev)=>{ev.preventDefault();ev.stopPropagation();gCat=k;buildGoalPickers();};ce.appendChild(b);});
 }
 function openGoalSheet(goal){
   editGoal=goal||null;
@@ -599,7 +599,7 @@ document.getElementById("deleteMilestone").onclick=()=>{if(mCtx.m){mCtx.g.milest
 
 /* ---------------- Step sheet ---------------- */
 function setSType(v){sType=v;document.querySelectorAll("#sType button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===v));document.getElementById("habitOpts").style.display=v==="habit"?"block":"none";}
-document.querySelectorAll("#sType button").forEach(b=>b.onclick=()=>setSType(b.dataset.v));
+document.querySelectorAll("#sType button").forEach(b=>b.onclick=(ev)=>{ev.preventDefault();ev.stopPropagation();setSType(b.dataset.v);});
 document.getElementById("sRemind").onchange=function(){document.getElementById("sTimeWrap").style.display=this.value?"block":"none";};
 function openStepSheet(g,m){
   sCtx={g,m};
